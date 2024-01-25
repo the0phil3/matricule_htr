@@ -2,7 +2,7 @@
 Here is the working library for a bash script using `python`, `yolo` `kraken` models to automatically transcribe French "fiches matricules" from 1887 to 1921.
 
 The models present have been trained on a sample of documents from the Paris municipal archives. The pipeline includes three models :
-- `Yolo v8` segmentation model
+- `Yolov8` segmentation model
 - `Kraken` baseline segmentation model
 - `Kraken` text recognition model
 

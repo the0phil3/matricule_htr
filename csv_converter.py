@@ -2,44 +2,50 @@ import xml.etree.ElementTree as ET
 import os
 import pandas as pd
 from lxml import etree
+import sys
 
+def run(directory):
+    output = pd.DataFrame()
+    for filename in os.listdir(directory):
+        if filename.endswith('.xml'):
+            tree = ET.parse(os.path.join(directory, filename))
+            region_list = []
+            region_value = []
+            for region in tree.findall(".//{http://www.loc.gov/standards/alto/ns-v4#}OtherTag"):
+                if region.attrib['LABEL'] != 'default':
+                    region_list.append(region.attrib['LABEL'])
+                    region_value.append(region.attrib['ID'])
 
-directory = "input/"
-output = pd.DataFrame()
+            regions_dict = {region_list[i]: region_value[i] for i in range(len(region_list))}
+            result = {}
 
-for filename in os.listdir(directory):
-    if filename.endswith('.xml'):
-        # Load the XML file into an ElementTree object
-        tree = ET.parse(os.path.join(directory, filename))
-        region_list = []
-        region_value = []
-        for region in tree.findall(".//{http://www.loc.gov/standards/alto/ns-v4#}OtherTag"):
-            if region.attrib['LABEL'] != 'default':
-                region_list.append(region.attrib['LABEL'])
-                region_value.append(region.attrib['ID'])
+            for key, value in regions_dict.items():
+                line1 = ".//{http://www.loc.gov/standards/alto/ns-v4#}"
+                line2 = f"TextBlock[@TAGREFS='{value}']/"
+                line3 = "{http://www.loc.gov/standards/alto/ns-v4#}TextLine/"
+                lines = tree.findall(line1 + line2 + line3 + "{http://www.loc.gov/standards/alto/ns-v4#}String")
 
-        regions_dict = {region_list[i]: region_value[i] for i in range(len(region_list))}
+                cat = []
 
-        result = {}
-        for key, value in regions_dict.items():
-            line1 = ".//{http://www.loc.gov/standards/alto/ns-v4#}"
-            line2 = f"TextBlock[@TAGREFS='{value}']/"
-            line3 = "{http://www.loc.gov/standards/alto/ns-v4#}TextLine/"
-            lines = tree.findall(line1 + line2 + line3 + "{http://www.loc.gov/standards/alto/ns-v4#}String")
+                for content in lines:
+                    cat.append(content.attrib['CONTENT'])
 
-            cat = []
+                result[f'{key}'] = cat
+                df_dictionary = pd.DataFrame([result])
 
-            for content in lines:
-                cat.append(content.attrib['CONTENT'])
+            output = pd.concat([output, df_dictionary], ignore_index=True)
 
-            result[f'{key}'] = cat
-            df_dictionary = pd.DataFrame([result])
+    return (output)
 
-        output = pd.concat([output, df_dictionary], ignore_index=True)
+def main():
+    # Check if a directory is provided as a command-line argument
+    if len(sys.argv) != 2:
+        print("Error: Please provide a directory as a command-line argument.")
+        sys.exit(1)
 
-order = ['nom', 'prenom', 'date_naissance', 'num_mat', 'classe', 'signalement', 'taille',
-         'instruction', 'instruction_militaire', 'details', 'affectation', 'adresse',
-         'dates', 'etat_civil', 'decision', 'cassier', 'campagnes', 'blessures']
+    directory = sys.argv[1]
+    output = run(directory)
+    output.to_csv('output/sample_table.tsv', sep='\t', index=False)
 
-output = output[order]
-output.to_csv('output/output.tsv', sep='\t', index=False)
+if __name__ == "__main__":
+    main()

@@ -10,7 +10,7 @@ NC='\033[0m'  # No Color
 INPUT='input/'
 OUTPUT='output/'
 LINE='--------------------------------------------------------------------------------------------------------'
-files=("models/rec_model_best.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
+files=("models/kraken_htrtrained.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
 
 # General checks before running
 if [ -z "$VIRTUAL_ENV" ]; then
@@ -44,8 +44,8 @@ echo $LINE
 
 # Starts treatment
 cd $INPUT
-yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/line_seg.mlmodel
-kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/kraken_htrtrained.mlmodel
+yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
+kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/kraken_htrtrained_best.mlmodel
 cd ..
 find $INPUT -type f -name "*ocr*" -exec mv {} $OUTPUT \;
 echo -e "${GREEN}Success:${NC} Finished predicitions! All completed Altos are in the output folder."

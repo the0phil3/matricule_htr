@@ -11,3 +11,5 @@ All of these models are implemented after each other thanks to Thibault Clérice
 To use this repository, clone it. Then create a Python3.9 virtual environment with `venv` like this : `python3.9 -m venv venv`. Once the environment is made, you may enter it by `source venv/bin/activate` and download all the required libraries by doing `pip install -r requirements.txt`.
 
 Then simply put the `.jpg`s of matricules that you have in the input folder of the cloned repository and run `bash processeur2maurin.sh`.
+
+An ouput folder will be created with all the different alto files corresponding to each image and a `.tsv` file that can be opened with microsoft excel or any other spreadsheet programme.

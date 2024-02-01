@@ -10,7 +10,7 @@ NC='\033[0m'  # No Color
 INPUT='input/'
 OUTPUT='output/'
 LINE='--------------------------------------------------------------------------------------------------------'
-files=("models/kraken_htrtrained.mlmodel" "models/line_seg.mlmodel" "models/best.pt")
+files=("models/rec_model_best.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
 
 # General checks before running
 if [ -z "$VIRTUAL_ENV" ]; then

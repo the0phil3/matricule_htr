@@ -18,6 +18,7 @@ def run(directory):
 
             regions_dict = {region_list[i]: region_value[i] for i in range(len(region_list))}
             result = {}
+            result['filename'] = filename
 
             for key, value in regions_dict.items():
                 line1 = ".//{http://www.loc.gov/standards/alto/ns-v4#}"

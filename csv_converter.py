@@ -1,7 +1,11 @@
+# csv_converter.py
+
+"""This module turns xml-altos into a tsv file"""
+
+# Imports
 import xml.etree.ElementTree as ET
 import os
 import pandas as pd
-from lxml import etree
 import sys
 
 def run(directory):
@@ -39,7 +43,7 @@ def run(directory):
     return (output)
 
 def main():
-    # Check if a directory is provided as a command-line argument
+    # Make sure only one arguement is given
     if len(sys.argv) != 2:
         print("Error: Please provide a directory as a command-line argument.")
         sys.exit(1)

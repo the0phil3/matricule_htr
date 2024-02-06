@@ -10,7 +10,7 @@ NC='\033[0m'  # No Color
 INPUT='input/'
 OUTPUT='output/'
 LINE='--------------------------------------------------------------------------------------------------------'
-files=("models/kraken_htrtrained.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
+files=("models/htrtrained_best.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
 
 # General checks before running
 if [ -z "$VIRTUAL_ENV" ]; then
@@ -36,7 +36,7 @@ mkdir -p "$INPUT"
 mkdir -p "$OUTPUT"
 
 # Pre-running messages
-echo -e "${GREEN}Success:${NC} Script is running in a virtual environment with the required libraries installed."
+echo -e "${GREEN}Success:${NC} Shell is running in a virtual environment with the required libraries installed."
 echo -e "${GREEN}Success:${NC} All models are present in the directory."
 echo Here are all the files that the programme will run on :
 echo $INPUT*.jpg
@@ -55,7 +55,7 @@ fi
 
 # If the user wants to do processing as well
 if [ "$extract" == true ]; then
-    read -p "Do you also want to do processing of the transcribed jpgs? (y/n): " process_response
+    read -p "Do you also want to process the transcribed jpgs? (y/n): " process_response
 
     # Check user response
     if [ "$process_response" == "y" ]; then
@@ -68,7 +68,7 @@ fi
 # Starts treatment
 cd $INPUT
 yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
-kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/kraken_htrtrained.mlmodel
+kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
 cd ..
 find $INPUT -type f -name "*ocr*" -exec mv {} $OUTPUT \;
 echo -e "${GREEN}Success:${NC} Finished predicitions! All completed Altos are in the output folder."
@@ -85,6 +85,6 @@ fi
 if [ "$process" == true ]; then
     echo $LINE
 	python3 csv_converter.py $OUTPUT
-    python3 csv_processor.py "sample_table.tsv"
+    python3 csv_processor.py $OUTPUT"sample_table.tsv"
     echo -e "${GREEN}Success:${NC} Converted and processed Altos into one tsv file called sample_table.tsv"
 fi

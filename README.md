@@ -17,7 +17,7 @@ If you use `conda` then you can simply run this line of code `conda env create -
 
 Put `.jpg`s of the matricules that you have in the input folder of the cloned repository and run `bash processeur2maurin.sh`.
 
-The shell will ask you whether you want to extract or extract and process the different matricules.
+The shell will ask you whether you want to extract or extract and process the different matricules and if you have access to GPU accelaration, which will just speed up the process.
 
 If you decide to extract without processing :
 - An ouput folder will be created with all the different alto files corresponding to each image as well as a `.tsv` file that can be opened with microsoft excel or any other spreadsheet programme.

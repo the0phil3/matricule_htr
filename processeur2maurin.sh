@@ -65,11 +65,30 @@ if [ "$extract" == true ]; then
     fi
 fi
 
+# Check if the user has a GPU
+read -p "Do you have a GPU for acceleration? (y/n): " gpu_response
+
+# Check user response
+if [ "$gpu_response" == "y" ]; then
+    gpu=true
+else
+    gpu=false
+fi
+
 # Starts treatment
 cd $INPUT
-yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
-kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
+
+# Choose device based on user response
+if [ "$gpu" == true ]; then
+    yaltai kraken --device cuda:0 -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
+    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
+else
+    yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
+    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
+fi
+
 cd ..
+
 find $INPUT -type f -name "*ocr*" -exec mv {} $OUTPUT \;
 echo -e "${GREEN}Success:${NC} Finished predicitions! All completed Altos are in the output folder."
 echo $OUTPUT*.xml

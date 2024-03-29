@@ -10,7 +10,8 @@ NC='\033[0m'  # No Color
 INPUT='input/'
 OUTPUT='output/'
 LINE='--------------------------------------------------------------------------------------------------------'
-files=("models/htrtrained_best.mlmodel" "models/seg_model_best.mlmodel" "models/best.pt")
+files=("models/model_best_new.mlmodel" "models/seg_model_best_new.mlmodel" "models/best.pt")
+jpg_count=$(ls -1 $INPUT*.jpg 2>/dev/null | wc -l)
 
 # General checks before running
 if [ -z "$VIRTUAL_ENV" ]; then
@@ -43,7 +44,7 @@ echo $INPUT*.jpg
 echo $LINE
 
 # Boolean questions
-read -p "Do you want to proceed with the extraction of the transcribed jpgs? (y/n): " extract_response
+read -p "Do you want to proceed with the extraction of the $jpg_count JPG files? (y/n): " extract_response
 
 # Check user response
 if [ "$extract_response" == "y" ]; then
@@ -80,11 +81,11 @@ cd $INPUT
 
 # Choose device based on user response
 if [ "$gpu" == true ]; then
-    yaltai kraken --device cuda:0 -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
-    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
+    yaltai kraken --device cuda:0 -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best_new.mlmodel
+    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/model_best_new.mlmodel
 else
-    yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best.mlmodel
-    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/htrtrained_best.mlmodel
+    yaltai kraken --device cpu -I "*.jpg" --suffix ".xml" segment --yolo ../models/best.pt -i ../models/seg_model_best_new.mlmodel
+    kraken -a -I '*.xml' -o _ocr.xml -f xml ocr -m ../models/model_best_new.mlmodel
 fi
 
 cd ..
